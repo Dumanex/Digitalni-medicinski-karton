@@ -1,0 +1,162 @@
+@startuml
+
+' Definisanje klasa
+enum polOsobe {
+    M,
+    Z,
+    NEPOZNATO
+}
+class Osoba {
+    - string _ime
+    - string _prezime
+    - polOsobe _pol
+    - Datum _datumRodjenja
+    - string _adresa
+    - string _brTelefona
+    --
+    + Osoba( string, string, polOsobe, Datum, string, string)
+    + ~Osoba()
+    + virtual void prikaziPodatke() const = 0
+    + string getIme() const
+    + string getPrezime() const
+    + polOsobe getPol() const
+    + string prikaziPol() const
+    + Datum getDatumRodjenja() const
+    + string getAdresa() const
+    + string getBrTelefona() const
+}
+
+
+class Pacijent {
+    - vector<Lek*> lekovi
+    - medicinskaIstorija istorija
+    --
+    + Pacijent(string, string, polOsobe, Datum, string, string)
+    + ~Pacijent()
+    + void prikaziPodatke() const
+    + void zakaziTermin(Doktor *)
+    + void dodajLek(Lek *)
+    + vector<Lek*> getLek()
+    + medicinskaIstorija& getMedicinskaIstorija()
+    + static Pacijent* kreirajPacijenta()
+}
+
+class Doktor {
+    - string _specijalnost
+    - map<int, bool> termini
+    --
+    + Doktor(string, string, polOsobe, Datum, string, string, string)
+    + ~Doktor()
+    + string getSpecijalnost() const
+    + void prikaziPodatke() const
+    + void prikaziDostupneTermine() const
+    + bool zakaziTermin(int)
+    + void predloziLek(Pacijent *, Lek *)
+    + static Doktor* kreirajDoktora()
+}
+
+class sistemZdravstva {
+    - vector<Osoba*> osobe
+    - vector<Pacijent*> pacijenti
+    - vector<Doktor*> doktori
+    - vector<Lek*> lekovi
+    --
+    + ~sistemZdravstva()
+    + void dodajOsobu(Osoba *)
+    + void dodajPacijenta(Pacijent *)
+    + void dodajDoktora(Doktor *)
+    + void dodajLek(Lek *)
+    + vector<Pacijent*> getPacijenti() const
+    + vector<Doktor*> getDoktori() const
+    + vector<Lek*> getLekovi() const
+    + void prikaziSveDoktore() const
+    + void prikaziSvePacijente() const
+    + void zakaziTerminZaPacijenta()
+    + void zakaziTerminZaSvePacijente()
+    + void prikaziInformacije() const
+}
+
+class medicinskaIstorija {
+    - vector<string> bolesti
+    --
+    + void dodajBolest(string)
+    + vector<string> getBolesti()
+    + void ispisiIstoriju() const
+}
+
+class Lek {
+    - string _naziv
+    - vector<string> _odgovarajuceBolesti
+    --
+    + Lek(string, vector<string>)
+    + ~Lek()
+    + string getNaziv() const
+    + vector<string> getOdgocarajuceBolesti() const
+    + void prikaziPodatke() const
+    + bool daLiJeOdgovarajucaBolest(string) const
+    + static Lek* kreirajLek()
+}
+
+class lekException {
+    - string poruka
+    --
+    + lekException(string, string)
+    + const char *what() const throw()
+}
+
+class terminException {
+    + const char *what() const throw()
+}
+
+class doktorException {
+    + const char *what() const throw()
+}
+
+class pacijentException {
+    + const char *what() const throw()
+}
+
+class Datum {
+    - int _dan
+    - string _mesec
+    - int _godina
+    --
+    + Datum(int, string, int)
+}
+
+' Definisanje nasleđivanja
+Pacijent --|> Osoba
+Doktor --|> Osoba
+lekException --|> exception
+terminException --|> exception
+doktorException --|> exception
+pacijentException --|> exception
+
+
+' Definisanje agregacije i kompozicije
+Pacijent -- "0..*" Lek : "ima"
+Pacijent --o "1" medicinskaIstorija : "poseduje"
+Doktor -- "0..*" Pacijent : "leči"
+sistemZdravstva -- "0..*" Doktor : "sadrži"
+sistemZdravstva -- "0..*" Pacijent : "sadrži"
+sistemZdravstva -- "0..*" Lek : "sadrži"
+' Definisanje prijateljskih klasa
+Datum <.. Pacijent
+Datum <.. Doktor
+polOsobe --> Osoba
+polOsobe .. Pacijent
+polOsobe .. Doktor
+
+' Legenda
+legend right
+|Legenda|
+| Prazna strelica : Nasleđivanje |
+| Puna strelica : Asocijacija |
+| Romb : Kompozicija(Klasa se sastoji od drugih klasa) |
+| Linija : Agregacija(Klasa koristi neku drugu klasu) |
+| Isprekidana inija : Prijatelj klase |
+| "1" : Tačno jedan |
+| "0..*" : Nula ili više |
+endlegend
+
+@enduml
