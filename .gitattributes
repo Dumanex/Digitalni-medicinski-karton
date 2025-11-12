@@ -1,3 +1,10 @@
-# Ignoriši CMake fajlove iz Linguist analize
-*.cmake linguist-detectable=false
+# Ignoriši build konfiguracione fajlove iz Linguist analize
 CMakeLists.txt linguist-detectable=false
+*.cmake linguist-detectable=false
+Makefile linguist-detectable=false
+makefile linguist-detectable=false
+*.mk linguist-detectable=false
+
+# (opciono) Ignoriši build foldere ako postoje
+build/* linguist-detectable=false
+out/* linguist-detectable=false
