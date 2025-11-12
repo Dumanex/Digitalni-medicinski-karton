@@ -1,0 +1,3 @@
+# Ignoriši CMake fajlove iz Linguist analize
+*.cmake linguist-detectable=false
+CMakeLists.txt linguist-detectable=false
